@@ -1,0 +1,10 @@
+Bridge
+Copyright 2026 Salil Chincholikar
+
+Licensed under the Apache License, Version 2.0.
+See LICENSE for the full license text.
+
+Build-script material in Makefile and scripts/bundle.sh was adapted from Waffle:
+Copyright 2026 Salil Chincholikar and Waffle contributors
+https://github.com/salilchincholikar/waffle
+Licensed under the Apache License, Version 2.0.

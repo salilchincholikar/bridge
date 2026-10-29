@@ -1,0 +1,1 @@
+{"AttachedPolicies":[{"PolicyName":"AWSLambdaBasicExecutionRole","PolicyArn":"arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"},{"PolicyName":"orders-sqs-access","PolicyArn":"arn:aws:iam::111111111111:policy/orders-sqs-access"}]}

@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "default_max_tier": 2,
+  "profiles": {
+    "example-dev":      { "label": "example-dev (UAT)",   "color": "blue", "default_region": "eu-west-1" },
+    "example-prod":  { "label": "example-prod (PROD)", "color": "red", "protected": true, "max_tier": 2, "default_region": "eu-west-1", "expected_account": "222222222222" }
+  }
+}

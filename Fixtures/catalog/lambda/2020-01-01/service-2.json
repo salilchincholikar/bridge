@@ -1,0 +1,13 @@
+{
+  "metadata": {"note": "Synthetic test/demo model, not an AWS service specification"},
+  "operations": {
+    "ListFunctions": {"input": {"shape": "ListFunctionsInput"}},
+    "DeleteFunction": {},
+    "GetFunction": {},
+    "GetFunctionConfiguration": {}
+  },
+  "shapes": {
+    "ListFunctionsInput": {"type": "structure", "members": {"FunctionVersion": {"shape": "FunctionVersion"}}},
+    "FunctionVersion": {"type": "string", "enum": ["ALL"]}
+  }
+}

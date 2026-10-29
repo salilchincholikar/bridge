@@ -1,0 +1,1 @@
+{"MetricAlarms":[{"AlarmName":"example-workload-orders-in-age","StateValue":"ALARM","StateReason":"Threshold Crossed: 1 datapoint [840.0] was greater than the threshold (600.0).","StateUpdatedTimestamp":"2026-10-28T09:12:00.000000+00:00","Namespace":"AWS/SQS","MetricName":"ApproximateAgeOfOldestMessage"}],"CompositeAlarms":[]}

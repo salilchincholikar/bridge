@@ -1,0 +1,76 @@
+#!/usr/bin/env python3
+"""Fake `claude` for tests. Follows the documented CLI surface and stream-json shape; never touches the network.
+
+It VALIDATES the arguments Bridge passes (a wrong command line exits 2 with a message), then:
+  - if the prompt contains "CALL aws_read <json>", it starts the MCP server named in --mcp-config, performs the real MCP
+    handshake (initialize, initialized, tools/list, tools/call) and reports the tool result in its stream output;
+  - if the prompt contains "FAIL_AUTH" it reports not-signed-in; "SLOW" sleeps; "DUMP_ENV" echoes its environment keys.
+"""
+import json, os, subprocess, sys, time
+
+args = sys.argv[1:]
+def opt(name):
+    return args[args.index(name) + 1] if name in args else None
+def die(msg):
+    sys.stderr.write("fake-claude: " + msg + "\n"); sys.exit(2)
+
+if args[:2] == ["auth", "status"]:
+    print(json.dumps({"authMethod": "claude.ai"})); sys.exit(0)
+
+if "-p" not in args: die("-p missing")
+prompt = opt("-p")
+for required in ["--output-format", "--verbose", "--include-partial-messages", "--mcp-config", "--strict-mcp-config", "--tools", "--allowedTools", "--setting-sources", "--append-system-prompt"]:
+    if required not in args: die("missing " + required)
+if opt("--output-format") != "stream-json": die("output-format must be stream-json")
+if opt("--tools") != "": die('--tools must be "" (no built-in tools)')
+if opt("--allowedTools") != "mcp__bridge__*": die("allowedTools must allow only the bridge MCP tools")
+if ("--session-id" in args) == ("--resume" in args): die("exactly one of --session-id / --resume expected")
+session_id = opt("--session-id") or opt("--resume")
+cfg = json.load(open(opt("--mcp-config")))
+if list(cfg["mcpServers"].keys()) != ["bridge"]: die("only the bridge MCP server may be configured")
+for k in os.environ:
+    if k.startswith("AWS_") or k == "ANTHROPIC_API_KEY": die("forbidden environment variable reached the harness: " + k)
+
+def emit(o): sys.stdout.write(json.dumps(o) + "\n"); sys.stdout.flush()
+def delta(text):
+    emit({"type": "stream_event", "event": {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": text}}})
+
+srv = cfg["mcpServers"]["bridge"]
+emit({"type": "system", "subtype": "init", "session_id": session_id, "tools": ["mcp__bridge__aws_read"], "mcp_servers": [{"name": "bridge", "status": "connected"}]})
+
+if "FAIL_AUTH" in prompt:
+    emit({"type": "result", "subtype": "success", "is_error": True, "result": "Not logged in. Please run /login", "session_id": session_id}); sys.exit(1)
+if "SLOW" in prompt:
+    time.sleep(37)
+if "DUMP_ENV" in prompt:
+    text = "env keys: " + ",".join(sorted(os.environ.keys())) + " cwd: " + os.getcwd()
+    delta(text); emit({"type": "assistant", "message": {"content": [{"type": "text", "text": text}]}})
+    emit({"type": "result", "subtype": "success", "is_error": False, "result": text, "session_id": session_id, "total_cost_usd": 0}); sys.exit(0)
+
+answer = "Hello from the fake assistant."
+if "CALL aws_read" in prompt:
+    call_args = json.loads(prompt.split("CALL aws_read", 1)[1].strip().splitlines()[0])
+    env = dict(os.environ); env.update(srv.get("env", {}))
+    p = subprocess.Popen([srv["command"]] + srv.get("args", []), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, env=env, text=True, bufsize=1)
+    def rpc(method, params=None, id=None):
+        msg = {"jsonrpc": "2.0", "method": method}
+        if id is not None: msg["id"] = id
+        if params is not None: msg["params"] = params
+        p.stdin.write(json.dumps(msg) + "\n"); p.stdin.flush()
+        if id is None: return None
+        return json.loads(p.stdout.readline())
+    init = rpc("initialize", {"protocolVersion": "2025-11-25", "capabilities": {}, "clientInfo": {"name": "fake-claude", "version": "0"}}, 1)
+    rpc("notifications/initialized")
+    tools = rpc("tools/list", {}, 2)
+    names = [t["name"] for t in tools["result"]["tools"]]
+    res = rpc("tools/call", {"name": "aws_read", "arguments": call_args}, 3)
+    p.stdin.close(); p.wait(timeout=10)
+    text = res["result"]["content"][0]["text"]
+    is_err = res["result"]["isError"]
+    emit({"type": "assistant", "message": {"content": [{"type": "tool_use", "id": "tu1", "name": "mcp__bridge__aws_read", "input": call_args}]}})
+    emit({"type": "user", "message": {"content": [{"type": "tool_result", "tool_use_id": "tu1", "content": [{"type": "text", "text": text}], "is_error": is_err}]}})
+    answer = "tools=" + ",".join(names) + " | isError=" + str(is_err) + " | " + text[:300]
+for chunk in [answer[i:i+20] for i in range(0, len(answer), 20)]:
+    delta(chunk)
+emit({"type": "assistant", "message": {"content": [{"type": "text", "text": answer}]}})
+emit({"type": "result", "subtype": "success", "is_error": False, "result": answer, "session_id": session_id, "total_cost_usd": 0.001})

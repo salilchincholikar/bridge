@@ -1,0 +1,1 @@
+{"Configuration":{"FunctionName":"example-workload-orders-handler","Runtime":"nodejs20.x","Handler":"index.handler","Environment":{"Variables":{"FEATURE_FLAG":"synthetic-private-value"}}},"Code":{"RepositoryType":"S3","Location":"https://awslambda-eu-west-1-tasks.s3.eu-west-1.amazonaws.com/snapshots/111111111111/example-workload?versionId=abc&X-Amz-Signature=deadbeef"}}

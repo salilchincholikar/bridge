@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleExecutable</key>
+	<string>Bridge</string>
+	<key>CFBundleIdentifier</key>
+	<string>dev.bridge.app</string>
+	<key>CFBundleName</key>
+	<string>Bridge</string>
+	<key>CFBundleDisplayName</key>
+	<string>Bridge</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.1.0</string>
+	<key>CFBundleVersion</key>
+	<string>2</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>14.0</string>
+	<key>NSHighResolutionCapable</key>
+	<true/>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
+	<key>CFBundleIconName</key>
+	<string>AppIcon</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.developer-tools</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2026 Salil Chincholikar.</string>
+	<key>BridgeCreator</key>
+	<string>Salil Chincholikar</string>
+	<key>BridgeProductDescription</key>
+	<string>A native macOS workspace for AWS.</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>NSSupportsAutomaticTermination</key>
+	<false/>
+	<key>BridgeCreatorURL</key>
+	<string>https://github.com/salilchincholikar</string>
+</dict>
+</plist>

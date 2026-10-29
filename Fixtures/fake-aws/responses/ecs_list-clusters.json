@@ -1,0 +1,1 @@
+{"clusterArns":["arn:aws:ecs:eu-west-1:111111111111:cluster/example-dev","arn:aws:ecs:eu-west-1:111111111111:cluster/batch"]}

@@ -1,0 +1,31 @@
+.build/
+build/
+.DS_Store
+*.swp
+
+# Local AWS/Bridge configuration, credentials and diagnostics. Curated Fixtures stay tracked.
+.aws/
+.config/
+.env
+.env.*
+!.env.example
+*.log
+*.trace
+*.xcuserstate
+xcuserdata/
+.swiftpm/
+coverage/
+test-results/
+snapshots/
+
+# Signing material and generated distribution artifacts.
+*.p12
+*.p8
+*.mobileprovision
+*.provisionprofile
+*.dmg
+*.pkg
+*.dSYM/
+
+# Historical experiments remain local; the initial public source is the production package.
+/Spikes/

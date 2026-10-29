@@ -1,0 +1,1 @@
+{"QueueUrls":["https://sqs.eu-west-1.amazonaws.com/111111111111/example-workload-orders-in","https://sqs.eu-west-1.amazonaws.com/111111111111/example-workload-orders-dlq","https://sqs.eu-west-1.amazonaws.com/111111111111/billing-events"]}

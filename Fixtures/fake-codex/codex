@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+"""Fake `codex` for tests. Validates the flags Bridge passes (a wrong command line exits 2) and emits the event shapes captured
+from a live `codex exec --json` run (thread.started, turn.started, item.completed/agent_message, item.started+completed/mcp_tool_call,
+turn.completed, turn.failed). If invoked as `codex-unsafe` it behaves like a Codex whose tool list was NOT locked down.
+Never touches the network."""
+import json, os, re, subprocess, sys, time
+
+argv = sys.argv[1:]
+unsafe = "unsafe" in os.path.basename(sys.argv[0])
+def die(msg): sys.stderr.write("fake-codex: " + msg + "\n"); sys.exit(2)
+def emit(o): sys.stdout.write(json.dumps(o) + "\n"); sys.stdout.flush()
+
+def has_flag_pair(flag, value): return any(argv[i] == flag and argv[i + 1] == value for i in range(len(argv) - 1))
+def has_config(prefix): return any(argv[i] == "-c" and argv[i + 1].startswith(prefix) for i in range(len(argv) - 1))
+def config(prefix):
+    for i in range(len(argv) - 1):
+        if argv[i] == "-c" and argv[i + 1].startswith(prefix): return argv[i + 1][len(prefix):]
+    return None
+
+if argv[:2] == ["login", "status"]:
+    print("Logged in using ChatGPT"); sys.exit(0)
+
+if argv[:2] == ["debug", "prompt-input"]:
+    headings = ["apply_patch", "list_mcp_resource_templates", "list_mcp_resources", "read_mcp_resource", "clock__curr_time"]
+    top = [{"type": "function", "name": "wait"}]
+    locked = has_flag_pair("--disable", "shell_tool") and has_flag_pair("--disable", "unified_exec") and has_config('web_search="disabled"')
+    if unsafe or not locked: headings += ["exec_command", "write_stdin"]; top.append({"type": "function", "name": "web__run"})
+    if os.environ.get("FAKE_CODEX_EXTRA_TOOL"): headings.append(os.environ["FAKE_CODEX_EXTRA_TOOL"])
+    desc = "Run JavaScript.\n" + "\n".join("### `%s`\nsome docs\n" % h for h in headings) + "\nfor example `await tools.exec_command(...)`"
+    tools = [{"type": "function", "name": "exec", "description": desc}] + top
+    print(json.dumps([{"type": "additional_tools", "role": "developer", "tools": tools}, {"type": "message", "role": "user", "content": []}])); sys.exit(0)
+
+if not argv or argv[0] != "exec": die("unsupported command: %r" % argv[:2])
+resuming = len(argv) > 1 and argv[1] == "resume"
+for required in ["--json", "--ignore-user-config", "--skip-git-repo-check"]:
+    if required not in argv: die("missing " + required)
+for feat in ["shell_tool", "unified_exec", "apps", "view_image", "standalone_web_search"]:
+    if not has_flag_pair("--disable", feat): die("feature not disabled: " + feat)
+if not has_config('web_search="disabled"'): die("web search not disabled")
+if not has_config('sandbox_mode="read-only"'): die("sandbox must be read-only")
+if "-s" in argv or "--sandbox" in argv: die("use -c sandbox_mode so resume accepts it")
+if not has_config('mcp_servers.bridge.default_tools_approval_mode="approve"'): die("bridge MCP tools must be pre-approved")
+if not resuming and "--ignore-rules" not in argv: die("first turn must pass --ignore-rules")
+if resuming and len(argv) < 4: die("resume needs a thread id and a prompt")
+for k in os.environ:
+    if k.startswith("AWS_") or k in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY"): die("forbidden environment variable reached the harness: " + k)
+
+prompt = argv[-1]
+thread = argv[argv.index("resume") + 1] if resuming else "01a1827f-0000-7000-8000-%012d" % (os.getpid() % 10**12)
+cmd = json.loads('"' + config('mcp_servers.bridge.command="')[:-1] + '"') if config('mcp_servers.bridge.command="') else None
+args = json.loads("[" + re.search(r'^\[(.*)\]$', config("mcp_servers.bridge.args=")).group(1) + "]")
+envtxt = re.search(r'^\{(.*)\}$', config("mcp_servers.bridge.env=")).group(1)
+mcp_env = {k: json.loads('"' + v + '"') for k, v in re.findall(r'(\w+)="((?:[^"\\]|\\.)*)"', envtxt)}
+
+if not resuming and "Instructions" not in prompt and "You are the assistant inside Bridge" not in prompt: die("system prompt must ride on the first message")
+
+emit({"type": "thread.started", "thread_id": thread})
+emit({"type": "turn.started"})
+
+if "FAIL_AUTH" in prompt:
+    emit({"type": "turn.failed", "error": {"message": "401 Unauthorized: please log in again"}}); sys.exit(1)
+if "FORBIDDEN" in prompt:
+    emit({"type": "item.started", "item": {"id": "item_9", "type": "command_execution", "command": "cat ~/.aws/config", "status": "in_progress"}})
+    time.sleep(37); sys.exit(0)
+if "SLOW" in prompt:
+    time.sleep(37)
+if "DUMP_ENV" in prompt:
+    text = "env keys: " + ",".join(sorted(os.environ.keys())) + " cwd: " + os.getcwd()
+    emit({"type": "item.completed", "item": {"id": "item_0", "type": "agent_message", "text": text}})
+    emit({"type": "turn.completed", "usage": {"input_tokens": 1, "output_tokens": 1}}); sys.exit(0)
+
+answer = "Hello from the fake codex."
+if "CALL aws_read" in prompt:
+    call_args = json.loads(prompt.split("CALL aws_read", 1)[1].strip().splitlines()[0])
+    env = dict(os.environ); env.update(mcp_env)
+    p = subprocess.Popen([cmd] + args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, env=env, text=True, bufsize=1)
+    def rpc(method, params=None, id=None):
+        msg = {"jsonrpc": "2.0", "method": method}
+        if id is not None: msg["id"] = id
+        if params is not None: msg["params"] = params
+        p.stdin.write(json.dumps(msg) + "\n"); p.stdin.flush()
+        return json.loads(p.stdout.readline()) if id is not None else None
+    rpc("initialize", {"protocolVersion": "2025-06-18", "capabilities": {}, "clientInfo": {"name": "fake-codex", "version": "0"}}, 1)
+    rpc("notifications/initialized")
+    names = [t["name"] for t in rpc("tools/list", {}, 2)["result"]["tools"]]
+    emit({"type": "item.completed", "item": {"id": "item_0", "type": "agent_message", "text": "I'll call the tool.\n"}})
+    emit({"type": "item.started", "item": {"id": "item_1", "type": "mcp_tool_call", "server": "bridge", "tool": "aws_read", "arguments": call_args, "result": None, "error": None, "status": "in_progress"}})
+    res = rpc("tools/call", {"name": "aws_read", "arguments": call_args}, 3)
+    p.stdin.close(); p.wait(timeout=10)
+    text = res["result"]["content"][0]["text"]; is_err = res["result"]["isError"]
+    if is_err:
+        emit({"type": "item.completed", "item": {"id": "item_1", "type": "mcp_tool_call", "server": "bridge", "tool": "aws_read", "arguments": call_args, "result": None, "error": {"message": text}, "status": "failed"}})
+    else:
+        emit({"type": "item.completed", "item": {"id": "item_1", "type": "mcp_tool_call", "server": "bridge", "tool": "aws_read", "arguments": call_args, "result": {"content": [{"type": "text", "text": text}], "structured_content": None}, "error": None, "status": "completed"}})
+    answer = "tools=" + ",".join(names) + " | isError=" + str(is_err) + " | " + text[:300]
+emit({"type": "item.completed", "item": {"id": "item_2", "type": "agent_message", "text": answer}})
+emit({"type": "turn.completed", "usage": {"input_tokens": 10, "output_tokens": 5}})

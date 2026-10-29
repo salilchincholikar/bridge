@@ -1,0 +1,1 @@
+{"RoleName":"example-workload-orders-handler-role","PolicyName":"inline-dynamodb-orders","PolicyDocument":{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["dynamodb:GetItem","dynamodb:PutItem"],"Resource":"arn:aws:dynamodb:eu-west-1:111111111111:table/orders-uat"}]}}

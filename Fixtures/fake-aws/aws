@@ -1,0 +1,130 @@
+#!/bin/sh
+# Fake `aws` for tests. Behaves according to the service/operation it is given. Never touches the network.
+# Usage mirrors the real CLI: fake-aws <service> <operation> [flags...]
+svc="$1"; op="$2"
+
+json_escape() { awk 'BEGIN{ORS=""} { gsub(/\\/,"\\\\"); gsub(/"/,"\\\""); print }'; }
+
+case "$svc $op" in
+  "--version "*)
+    echo "aws-cli/2.99.9 Python/3.99 Darwin/99 source/arm64 (fake)" ;;
+  "configure list-profiles")
+    printf 'default\nadmin-via-example-dev\nexample-dev\nexample-prod\nkeys\nlegacy\nnested\nproc\nquoted name\ncredentials-only\n' ;;
+  "sts get-caller-identity")
+    profile=""; prev=""
+    for a in "$@"; do [ "$prev" = "--profile" ] && profile="$a"; prev="$a"; done
+    case "$profile" in
+      *expired*)
+        echo "The SSO session associated with this profile has expired or is otherwise invalid. To refresh this SSO session run aws sso login with the corresponding profile." >&2
+        exit 255 ;;
+      *prod*) printf '{"UserId":"AROAFAKE:me","Account":"222222222222","Arn":"arn:aws:sts::222222222222:assumed-role/ReadOnly/me"}\n' ;;
+      *) printf '{"UserId":"AIDAFAKE","Account":"111111111111","Arn":"arn:aws:iam::111111111111:user/fake"}\n' ;;
+    esac ;;
+  "lambda list-functions")
+    # Pagination, imitating the CLI: `--max-items 1` ALWAYS returns a NextToken (lets tests hit a page cap);
+    # other `--max-items N` returns page 1 with a token, and the follow-up with `--starting-token` returns page 2.
+    maxitems=""; token=""; prev=""
+    for a in "$@"; do
+      [ "$prev" = "--max-items" ] && maxitems="$a"
+      [ "$prev" = "--starting-token" ] && token="$a"
+      prev="$a"
+    done
+    if [ "$maxitems" = "1" ]; then printf '{"Functions":[{"FunctionName":"a","Runtime":"python3.12","MemorySize":128,"Timeout":3,"LastModified":"2026-10-26T14:03:11.000+0000"}],"NextToken":"tok-1"}\n'
+    elif [ -n "$token" ]; then printf '{"Functions":[{"FunctionName":"example-workload-orders-handler","Runtime":"nodejs20.x","MemorySize":512,"Timeout":30,"LastModified":"2026-10-26T14:03:11.000+0000"}]}\n'
+    elif [ -n "$maxitems" ]; then printf '{"Functions":[{"FunctionName":"a","Runtime":"python3.12","MemorySize":128,"Timeout":3,"LastModified":"2026-10-26T14:03:11.000+0000"}],"NextToken":"tok-1"}\n'
+    else printf '{"Functions":[{"FunctionName":"a","Runtime":"python3.12","MemorySize":128,"Timeout":3,"LastModified":"2026-10-26T14:03:11.000+0000"},{"FunctionName":"b","Runtime":"python3.12","MemorySize":128,"Timeout":3,"LastModified":"2026-10-26T14:03:11.000+0000"}]}\n'; fi ;;
+  "fake args")
+    # Print the argument vector as a JSON array, one element per argument (proves no shell re-splitting).
+    printf '['; first=1
+    for a in "$@"; do
+      [ $first = 1 ] || printf ','; first=0
+      printf '"%s"' "$(printf '%s' "$a" | json_escape)"
+    done
+    printf ']\n' ;;
+  "fake env")
+    printf '{'; first=1
+    env | sort | while IFS= read -r line; do
+      k="${line%%=*}"; v="${line#*=}"
+      [ "$first" = 1 ] || printf ','; first=0
+      printf '"%s":"%s"' "$k" "$(printf '%s' "$v" | json_escape)"
+    done
+    printf '}\n' ;;
+  "fake input")
+    # Echo the --cli-input-json file's content and its permissions.
+    f=""
+    prev=""
+    for a in "$@"; do [ "$prev" = "--cli-input-json" ] && f="${a#file://}"; prev="$a"; done
+    perms=$(stat -f %Lp "$f" 2>/dev/null)
+    dperms=$(stat -f %Lp "$(dirname "$f")" 2>/dev/null)
+    printf '{"file":"%s","perms":"%s","dirPerms":"%s","content":%s}\n' "$(basename "$f")" "$perms" "$dperms" "$(cat "$f")" ;;
+  "sso login")
+    # Wording imitates what the real CLI prints (from memory; unverified).
+    profile=""; prev=""
+    for a in "$@"; do [ "$prev" = "--profile" ] && profile="$a"; prev="$a"; done
+    echo "Attempting to automatically open the SSO authorization page in your default browser."
+    echo "If the browser does not open or you wish to use a different device to authorize this request, open the following URL:"
+    echo
+    echo "https://device.sso.eu-west-1.amazonaws.com/"
+    echo
+    echo "Then enter the code:"
+    echo
+    echo "ABCD-EFGH"
+    case "$profile" in
+      *slow*) sleep 37 & wait ;;
+      *fail*) echo "The SSO authorization request was denied." >&2; exit 255 ;;
+      *) echo "Successfully logged into Start URL: https://example.awsapps.com/start" ;;
+    esac ;;
+  "s3api get-object")
+    # Mimics the real CLI: the LAST argument is the output file. The key (`--key=...`) selects the behavior.
+    out=""; key=""
+    for a in "$@"; do out="$a"; case "$a" in --key=*) key="${a#--key=}" ;; esac; done
+    case "$key" in
+      *slow*) head -c 1000000 /dev/zero | tr '\0' 'a' > "$out"; sleep 37 & wait ;;
+      *fail*) printf 'partial' > "$out"; echo "An error occurred (NoSuchKey) when calling the GetObject operation: The specified key does not exist." >&2; exit 254 ;;
+      *) head -c 2097152 /dev/zero | tr '\0' 'a' > "$out"; printf '{"ContentLength":2097152}\n' ;;
+    esac ;;
+  "fake sleep")
+    # 37 s is deliberately unusual so tests can `pgrep -f "sleep 37"` to detect a leaked grandchild.
+    sleep 37 & wait ;;
+  "fake big")
+    printf '{"x":"'; head -c 3000000 /dev/zero | tr '\0' 'a'; printf '"}\n' ;;
+  "fake auth-expired")
+    echo "The SSO session associated with this profile has expired or is otherwise invalid. To refresh this SSO session run aws sso login with the corresponding profile." >&2
+    exit 255 ;;
+  "fake fail")
+    echo "An error occurred (AccessDenied) when calling the Fake operation: not allowed" >&2
+    exit 254 ;;
+  "fake not-json")
+    echo "this is not json" ;;
+  "fake empty")
+    : ;;
+  "cloudwatch get-metric-data")
+    # Generates 90 one-minute points ending now, so charts always have data inside their window.
+    # Four series (m0..m3) are always returned; callers use the ones they asked for. Values are deterministic waves.
+    printf '{"MetricDataResults":['
+    for s in 0 1 2 3; do
+      [ $s = 0 ] || printf ','
+      printf '{"Id":"m%s","Label":"series %s","StatusCode":"Complete","Timestamps":[' "$s" "$s"
+      i=89; first=1
+      while [ $i -ge 0 ]; do
+        [ $first = 1 ] || printf ','; first=0
+        printf '"%s"' "$(date -u -v-${i}M +%Y-%m-%dT%H:%M:00Z)"
+        i=$((i-1))
+      done
+      printf '],"Values":['
+      i=0; first=1
+      while [ $i -lt 90 ]; do
+        [ $first = 1 ] || printf ','; first=0
+        # integer wave 10..100 shifted per series
+        v=$(( 55 + ( (i * (s + 3)) % 90 ) - 45 + s * 5 ))
+        printf '%s' "$v"
+        i=$((i+1))
+      done
+      printf ']}'
+    done
+    printf ']}\n' ;;
+  *)
+    # Canned response: responses/<service>_<operation>.json next to this script.
+    f="$(dirname "$0")/responses/${svc}_${op}.json"
+    if [ -f "$f" ]; then cat "$f"; else echo "fake-aws: unsupported $svc $op" >&2; exit 2; fi ;;
+esac

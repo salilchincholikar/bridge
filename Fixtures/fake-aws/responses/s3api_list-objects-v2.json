@@ -1,0 +1,1 @@
+{"Contents":[{"Key":"reports/summary.csv","LastModified":"2026-10-27T10:00:00+00:00","ETag":"\"abc\"","Size":2097152,"StorageClass":"STANDARD"},{"Key":"reports/2026-10.json","LastModified":"2026-10-26T10:00:00+00:00","ETag":"\"def\"","Size":4096,"StorageClass":"STANDARD"}],"CommonPrefixes":[{"Prefix":"reports/archive/"},{"Prefix":"reports/tmp/"}]}
