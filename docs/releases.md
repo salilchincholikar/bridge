@@ -1,6 +1,6 @@
 # Preparing a release
 
-There is no published release yet. The owner selected Apache-2.0; LICENSE and NOTICE are included in app bundles. Local ad-hoc signing verifies bundle integrity; it does not establish Developer ID identity, notarization or trust on another Mac.
+The first release is being prepared as a developer preview. The owner selected Apache-2.0; LICENSE and NOTICE are included in app bundles. Local ad-hoc signing verifies bundle integrity; it does not establish Developer ID identity, notarization or trust on another Mac.
 
 ## Source preview gate
 
@@ -12,7 +12,13 @@ There is no published release yet. The owner selected Apache-2.0; LICENSE and NO
 - Review optional assistant support, including current provider configuration/tool isolation and terms. Do not infer compatibility from fake-harness checks.
 - Use only fictional data in public screenshots; perform native visual/accessibility review rather than publishing incomplete offscreen captures.
 
-## Downloadable app gate
+## Unnotarized developer preview
+
+The owner authorized an Apple Silicon 0.1.0 preview with explicit ad-hoc signing and notarization limitations. The tag-triggered `release.yml` runs offline checks, packages only the production bundle and legal/setup files, verifies the extracted ZIP and publishes a GitHub prerelease with checksums and a manifest. This preview does not satisfy the signed-distribution gates below. Broader real-account, minimum-OS and quarantined-download acceptance remain open.
+
+Build and validate locally with `make check`, commit the release sources, then run `python3 scripts/package-preview.py` from the clean checkout. Publish by pushing the matching `v` version tag after reviewing its release notes. Never move an existing public release tag. A failed publish may leave a draft for maintainer review; no existing release is overwritten automatically.
+
+## Signed downloadable app gate
 
 In addition to the source gate:
 
@@ -22,4 +28,4 @@ In addition to the source gate:
 - Verify representative AWS workflows with explicitly selected test accounts, including expired sign-in, denied access and missing CLI. Do not import unsanitized responses as fixtures.
 - Produce reviewed release notes, checksums, license/notices and a reproducible package manifest. Test upgrade/configuration behavior.
 
-The prepared CI intentionally has no publish job, signing certificates or live credentials. Repository creation/publishing and Apple signing setup happen later with the owner. Automatic updates and Homebrew distribution follow a reliable initial release path.
+The ordinary checks workflow has read-only repository access. The separate preview-release workflow has repository write permission for release creation and no Apple signing certificates or live AWS/provider credentials. Apple signing setup, automatic updates and Homebrew distribution remain future work.
