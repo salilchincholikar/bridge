@@ -27,11 +27,11 @@
     <section class="hero wrap">
       <div class="hero-top">
         <div class="hero-intro">
-          <p class="eyebrow"><span class="status-dot"></span> BRIDGE / SOURCE PREVIEW {{VERSION}}</p>
+          <p class="eyebrow"><span class="status-dot"></span> BRIDGE / DEVELOPER PREVIEW {{VERSION}}</p>
           <h1>A workspace for<br>your AWS stack.</h1>
           <p class="hero-copy">Inspect resources. Trace workloads. Read logs. Track spend.<br>A native macOS app on top of the AWS CLI you already use.</p>
-          <div class="hero-actions"><a class="button primary" href="#start">Build from source <span aria-hidden="true">↓</span></a><a class="button secondary" href="https://github.com/salilchincholikar/bridge">GitHub <span aria-hidden="true">↗</span></a></div>
-          <p class="hero-meta">macOS 14+ <span>/</span> Swift 6.2+ tools <span>/</span> Apache-2.0</p>
+          <div class="hero-actions"><a class="button primary" href="https://github.com/salilchincholikar/bridge/releases/tag/v0.1.0">Download preview <span aria-hidden="true">↓</span></a><a class="button secondary" href="#start">Build from source</a></div>
+          <p class="hero-meta">Apple Silicon <span>/</span> macOS 14+ target <span>/</span> Unnotarized</p>
         </div>
         <aside class="quickstart" aria-label="Demo quick start">
           <div class="terminal-heading"><span>~/bridge</span><span>demo / no credentials</span></div>
@@ -60,7 +60,7 @@ make demo</code></pre>
     </section>
     <div class="shortcuts wrap"><span>LESS MOUSE. MORE KEYBOARD.</span><div><kbd>⌘ K</kbd> Jump</div><div><kbd>⌘ J</kbd> Command drawer</div><div><kbd>⌘ R</kbd> Refresh</div><div><kbd>⌘ T</kbd> New tab</div></div>
     <section class="start-section" id="start"><div class="wrap section start-grid">
-      <div><p class="eyebrow">03 / RUN LOCALLY</p><h2>Start with the demo.<br>Bring your profiles.</h2><p>Build from source with macOS and Swift tools 6.2+. For real accounts, install AWS CLI v2 and configure a named profile first.</p><p class="release-note">v{{VERSION}} / pre-release source<br>No signed installer published yet.</p><a class="text-link" href="https://github.com/salilchincholikar/bridge#requirements">Requirements &amp; full setup ↗</a></div>
+      <div><p class="eyebrow">03 / RUN LOCALLY</p><h2>Start with the demo.<br>Bring your profiles.</h2><p>Build from source with macOS and Swift tools 6.2+. For real accounts, install AWS CLI v2 and configure a named profile first.</p><p class="release-note">v{{VERSION}} / developer preview<br>Download is ad-hoc signed and unnotarized. macOS may block it.</p><a class="text-link" href="https://github.com/salilchincholikar/bridge#requirements">Requirements &amp; full setup ↗</a></div>
       <div class="setup"><div class="setup-tabs" role="tablist" aria-label="Setup mode"><button id="demo-tab" role="tab" aria-selected="true" aria-controls="demo-panel" tabindex="0" data-mode="demo">Demo</button><button id="aws-tab" role="tab" aria-selected="false" aria-controls="aws-panel" tabindex="-1" data-mode="aws">Your AWS profiles</button></div>
         <div id="demo-panel" class="setup-panel" role="tabpanel" aria-labelledby="demo-tab"><p>Fictional resources. No AWS or model-provider account.</p><pre><code>git clone https://github.com/salilchincholikar/bridge.git
 cd bridge

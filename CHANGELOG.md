@@ -1,8 +1,8 @@
 # Changelog
 
-## Unreleased — open-source preparation
+## 0.1.0 — Developer preview
 
-App metadata: version 0.1.0, build 2 (pre-release review build).
+App metadata: version 0.1.0, build 2. Apple Silicon preview; ad-hoc signed and unnotarized.
 
 - Adopt Apache-2.0 and include LICENSE/NOTICE in app bundles.
 
@@ -15,4 +15,4 @@ App metadata: version 0.1.0, build 2 (pre-release review build).
 - Compile UI self-tests only into the dedicated test build; verify ad-hoc bundle signing and fail on signing errors.
 - Add contributor, security, architecture and SDK/UI documentation and local artifact ignore rules.
 
-No public release or production-readiness claim is implied. See `docs/open-source-readiness.md` for remaining gates.
+Release assets include a production app ZIP, checksums and artifact manifest. This developer preview makes no production-readiness claim. See `docs/open-source-readiness.md` for remaining gates.

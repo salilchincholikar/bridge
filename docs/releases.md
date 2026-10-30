@@ -1,6 +1,6 @@
 # Preparing a release
 
-The first release is being prepared as a developer preview. The owner selected Apache-2.0; LICENSE and NOTICE are included in app bundles. Local ad-hoc signing verifies bundle integrity; it does not establish Developer ID identity, notarization or trust on another Mac.
+[v0.1.0](https://github.com/salilchincholikar/bridge/releases/tag/v0.1.0) is an Apple Silicon developer preview with an ad-hoc-signed, unnotarized app ZIP. The owner selected Apache-2.0; LICENSE and NOTICE are included in app bundles. Local ad-hoc signing verifies bundle integrity; it does not establish Developer ID identity, notarization or trust on another Mac.
 
 ## Source preview gate
 

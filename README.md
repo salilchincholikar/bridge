@@ -35,7 +35,9 @@ Billing loads only when requested. Cost Explorer must be enabled and permitted f
 - **Real AWS use:** [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and an existing named profile. Bridge discovers `/opt/homebrew/bin/aws` or `/usr/local/bin/aws`; `aws_path` in Bridge settings can select another installation.
 - **Demo/offline checks:** no AWS credentials, installed AWS CLI or model-provider account required.
 
-There is no published installer yet. Clone the source, then use the build commands below:
+An [Apple Silicon v0.1.0 developer preview](https://github.com/salilchincholikar/bridge/releases/tag/v0.1.0) is available as a ZIP. It is **ad-hoc signed and unnotarized**; macOS may block a quarantined download. No Intel download or signed installer is included. Read the release notes and verify the checksums before evaluating it.
+
+To build from source, clone the repository and use the commands below:
 
 ```sh
 git clone https://github.com/salilchincholikar/bridge.git
