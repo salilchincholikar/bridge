@@ -19,7 +19,7 @@ let package = Package(
         .target(name: "BridgeAgents", dependencies: ["BridgeCore"], path: "Sources/BridgeAgents"),
         // AppKit app: a thin layer over BridgeCore.
         .executableTarget(name: "BridgeApp", dependencies: ["BridgeCore", "BridgeUI", "BridgeAgents"], path: "Sources/BridgeApp"),
-        // Plain executable instead of XCTest: Command Line Tools ships no XCTest/Swift Testing (as in ../waffle).
+        // Plain executable instead of XCTest: Command Line Tools ships no XCTest/Swift Testing.
         .executableTarget(name: "BridgeCoreTests", dependencies: ["BridgeCore", "BridgeAgents"], path: "Tests/BridgeCoreTests"),
         .executableTarget(name: "BridgeClientExample", dependencies: ["BridgeCore"], path: "examples/BridgeClient"),
     ],

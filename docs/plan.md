@@ -32,7 +32,6 @@ Remaining acceptance: real AWS profiles/response shapes, real-call latency, comp
 | SDK dependency | `[future]`: none (CLI-first) |
 | (History) `gpui 0.2.2` + `runtime_shaders` compiled with Command Line Tools only | `[experiment]`, off the critical path |
 | Swift 6.4 present with Command Line Tools only | observed |
-| Precedent: `../waffle` (Swift/AppKit + Rust engine) built with SwiftPM and a `bundle.sh`, "No Xcode required" | read by me, not built or run |
 | AppKit + SwiftUI + Swift Charts via SwiftPM under CLT: builds, bundles, launches. `@State` does not compile (no SwiftUIMacros plugin); `@Observable` works. SwiftUI `Table` itself was not tried (AppKit `NSTableView` used) | `[experiment]` |
 | Local AWS CLI service models inspected for the five target services (counts in `technical.md` 4.7) | `[experiment]` |
 | Machine: aws-cli 2.37.9, rustc/cargo 1.95.0, claude 2.1.311, codex 0.164.0; only Command Line Tools (no full Xcode) | observed |
@@ -77,8 +76,8 @@ Output: a short results note appended to `technical.md` with the numbers.
 
 ### Milestone 2 — Swift feasibility spike (go/no-go; about a weekend)
 Settles the toolchain and the core-language question with evidence. This is where the Swift package first appears (a throwaway spike package, not the real layout yet).
-- [ ] **Toolchain:** start from `../waffle`'s proven setup (SwiftPM + AppKit, tests as an executable target). Check whether SwiftUI `Table` and Swift Charts also build and run via `swift build` under Command Line Tools, directly or hosted in AppKit with `NSHostingView`. Record the exact working commands; Xcode only if truly needed.
-- [ ] **App bundle:** produce a double-clickable `.app` with a `bundle.sh` adapted from `../waffle`.
+- [ ] **Toolchain:** use the SwiftPM and AppKit setup (SwiftPM + AppKit, tests as an executable target). Check whether SwiftUI `Table` and Swift Charts also build and run via `swift build` under Command Line Tools, directly or hosted in AppKit with `NSHostingView`. Record the exact working commands; Xcode only if truly needed.
+- [ ] **App bundle:** produce a double-clickable `.app` with the app bundle script.
 - [ ] Sidebar with hard-coded profiles; selecting one changes a header; two tabs holding independent state.
 - [ ] Table with 10,000 rows: scrolling shows no visible hitching; sorting a column completes in under 200 ms. Try SwiftUI `Table` first; wrap `NSTableView` if it hitches.
 - [ ] JSON viewer renders a ~1 MB document and opens in under 500 ms, with search; markdown view (`AttributedString`) renders headings, lists, code blocks.
@@ -158,7 +157,7 @@ External claims that rest on a source are linked in the docs. These are **not** 
 |---|---|---|
 | Other macro-backed SwiftUI features (beyond `@State`) under Command Line Tools; SwiftUI `Table` | Only `@State` failure and Swift Charts hosting were exercised | Avoid SwiftUI beyond small `@Observable` islands, or test when needed |
 | Real on-screen feel: table scrolling, chart hover tooltip, tab independence, JSON far jumps | Headless draws only; no screenshots possible in this session | You, running `open Spikes/ui/build/BridgeSpike.app` |
-| Hybrid boundary can handle async, streaming, cancellable calls cleanly | waffle's engine is synchronous; ours would not be | Only if the core-language question reopens |
+| Hybrid boundary can handle async, streaming, cancellable calls cleanly | The request engine requires asynchronous streaming and cancellation | Only if the core-language question reopens |
 | AWS SDK for Swift: SSO profile handling in practice, App Sandbox specifics, build time across modules; its GitHub README still says developer preview while AWS announced GA | Only blog/docs snippets read | Milestone 2; read the developer guide |
 | MCP Swift SDK: current release, spec revision, server-side stdio support, Xcode 16+ requirement | Search results disagree on versions | Check the modelcontextprotocol/swift-sdk repo at Milestone 7 |
 | Swift UI + Rust core hybrid (FFI or socket) costs | Reasoned, not prototyped | Only if the core-language question reopens |

@@ -60,7 +60,7 @@ Also review cancellation races, `@unchecked Sendable` synchronization, IPC permi
 - Review account IDs, ARNs, emails, bucket names, logs, local paths, presigned URLs, and captured responses. A targeted scan so far found matches in test/fixture material; that is not a complete clearance.
 - Use only demo data for screenshots and recordings. Never copy the real-account screenshots from this development conversation into public assets.
 - Inspect `Spikes/` before including it. Move useful sanitized research into an explicitly historical area, or exclude experiments from the initial public import without deleting the local work.
-- Confirm ownership/attribution of adapted code, including references to the neighboring `waffle` project. Record the icon generator and asset provenance. Audit dependencies again when packages are introduced.
+- Confirm ownership/attribution of adapted code, Record the icon generator and asset provenance. Audit dependencies again when packages are introduced.
 - Expand ignore rules for local credentials/configuration, logs, test captures, signing material and generated artifacts. Keep curated example configuration and synthetic fixtures explicitly included. Ignore rules complement review; they are not a secret scanner.
 
 ## 3. Proposed repository and module structure
@@ -239,7 +239,7 @@ Prepare local workflow files before the repository exists. Once connected, run P
 ### Required repository additions
 
 - **README:** purpose, demo screenshot, actual supported workflows, prerequisites, install/build/run, privacy/security summary, known limitations and roadmap. Use CI evidence rather than repeatedly hardcoding test counts as a quality claim.
-- **LICENSE and NOTICE:** Apache-2.0 adopted by the owner; the full text and applicable Waffle build-script attribution are included in app bundles. See [licensing.md](licensing.md) for evidence and remaining provenance work.
+- **LICENSE and NOTICE:** Apache-2.0 adopted by the owner; the full text and Bridge's copyright notice are included in app bundles. See [licensing.md](licensing.md) for evidence and remaining provenance work.
 - **CONTRIBUTING:** setup, module rules, test commands, adding services/UI behavior, fixture hygiene and review expectations.
 - **SECURITY:** private reporting route, supported versions, threat model link and no real secrets/account dumps in public issues. Enable GitHub [private vulnerability reporting](https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/configure-for-a-repository) after the repository exists.
 - **Privacy/security model:** AWS calls, optional provider egress, local files/cache/history, external CLI behavior, credential processes and redaction limitations. Make statements match implementation and current authoritative provider documentation.

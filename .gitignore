@@ -29,3 +29,4 @@ snapshots/
 
 # Historical experiments remain local; the initial public source is the production package.
 /Spikes/
+/_site/

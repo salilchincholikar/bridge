@@ -8,7 +8,7 @@ Built with Swift, AppKit and hosted SwiftUI/Charts. Each native window tab keeps
 
 ![Bridge Demo overview with service navigation and native toolbar](docs/images/overview.png)
 
-*Native capture of Bridge Demo with fictional data.*
+*Bridge Demo with fictional data.*
 
 **Status:** pre-release. Local builds and offline regression checks pass; hosted CI, broader real-account compatibility and downloadable-release signing are tracked separately. See the [validation record](docs/validation.md) and [release tracker](docs/open-source-readiness.md).
 
@@ -106,6 +106,7 @@ Fixtures/                  # Invented config/responses, fake executables and syn
 examples/BridgeClient/     # Independent Core consumer with an in-memory adapter
 Resources/                 # App metadata, icon, credits and Help
 scripts/                   # Build, asset, test and bundle checks
+site/                      # Dependency-free GitHub Pages landing page
 .github/                   # Prepared CI workflow, ownership and contribution templates
 docs/                      # Architecture, security, development and release guidance
 ```
@@ -113,6 +114,8 @@ docs/                      # Architecture, security, development and release gui
 `BridgeCore`, `BridgeUI` and `BridgeAgents` are experimental SwiftPM library products. Core owns authorization and sensitive-result handling; the current execution adapter uses the AWS CLI. An in-memory adapter demonstrates reuse without credentials. No AWS Swift SDK backend is implemented yet.
 
 Feature screens currently remain internal to the app target. Shared tables/inspectors, the window coordinator and test runner still need further decomposition. Historical `Spikes/` experiments are outside the production package and require review before public inclusion.
+
+For the website build and deployment, see [site maintenance](docs/site.md).
 
 See [architecture](docs/architecture.md), [SDK usage](docs/sdk.md) and [UI reuse](docs/ui-components.md).
 
@@ -144,6 +147,6 @@ Read the [security model](docs/security-model.md), [privacy notes](docs/privacy.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) and the [readiness tracker](docs/open-source-readiness.md).
 
-Licensed under the [Apache License, Version 2.0](LICENSE). Copyright © 2026 Salil Chincholikar. Adapted build-script attribution is retained in [NOTICE](NOTICE); app bundles include both files. Further source/asset provenance review remains part of publication preparation.
+Licensed under the [Apache License, Version 2.0](LICENSE). Copyright © 2026 Salil Chincholikar. The copyright notice is retained in [NOTICE](NOTICE); app bundles include both files. Further source/asset provenance review remains part of publication preparation.
 
 Made by [Salil Chincholikar](https://github.com/salilchincholikar). Bridge is independent software and is not affiliated with Amazon Web Services.

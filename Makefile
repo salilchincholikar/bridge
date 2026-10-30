@@ -1,5 +1,5 @@
-# bridge: common tasks. Run `make help`. Modeled on ../waffle's Makefile.
-.PHONY: help app run test clean demo demo-app ui-test ui-test-app lint example verify-bundle check
+# bridge: common tasks. Run `make help`.
+.PHONY: help app run test clean demo demo-app ui-test ui-test-app lint example verify-bundle check site
 
 SWIFT_FLAGS ?=
 .NOTPARALLEL:
@@ -19,6 +19,9 @@ test:       ## Run the BridgeCore tests (plain executable; no XCTest needed)
 
 example:    ## Run the independent Core client example (in-memory, no AWS)
 	@swift run $(SWIFT_FLAGS) -c release BridgeClientExample
+
+site:       ## Build the GitHub Pages site into _site (no third-party dependencies)
+	@python3 scripts/build-site.py
 
 lint:       ## Validate curated JSON/plist assets and shell syntax
 	@python3 scripts/check-source.py

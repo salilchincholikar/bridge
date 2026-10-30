@@ -1,6 +1,5 @@
 #!/bin/sh
 # Assemble build/Bridge.app from the SwiftPM executable. No Xcode required.
-# Adapted from ../waffle/scripts/bundle.sh (copy binary, Info.plist, icon if present, ad-hoc codesign).
 #   scripts/bundle.sh [debug|release]   (default: release)
 set -eu
 cd "$(dirname "$0")/.."

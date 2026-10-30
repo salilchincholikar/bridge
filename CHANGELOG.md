@@ -4,7 +4,7 @@
 
 App metadata: version 0.1.0, build 2 (pre-release review build).
 
-- Adopt Apache-2.0, retain Waffle build-script attribution and include LICENSE/NOTICE in app bundles.
+- Adopt Apache-2.0 and include LICENSE/NOTICE in app bundles.
 
 - Enforce credential-helper approval before identity probes, requests and S3 transfers, including source-profile chains and changed commands.
 - Add human review of credential helpers and an explicit hash-based CLI approval command.

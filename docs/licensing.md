@@ -1,15 +1,9 @@
 # Licensing and attribution
 
-The owner selected **Apache-2.0** on 2026-10-29. The repository's [LICENSE](../LICENSE) contains the full terms. [NOTICE](../NOTICE) credits Salil Chincholikar for Bridge and retains attribution for build-script material adapted from Waffle.
+Bridge is licensed under **Apache-2.0**, selected by its owner on 2026-10-29. [LICENSE](../LICENSE) contains the full terms and [NOTICE](../NOTICE) records Salil Chincholikar’s copyright.
 
-The bundle script includes LICENSE and NOTICE in production, demo and UI-check bundles. The production verification script compares their contents with the repository copies. Contributions submitted for inclusion use the same license, subject to a separate written agreement; see CONTRIBUTING.md and Apache-2.0 section 5.
+The bundle script includes LICENSE and NOTICE in production, demo and UI-check bundles. Production verification compares their contents with the repository copies. Contributions submitted for inclusion use the same license, subject to a separate written agreement; see CONTRIBUTING.md and Apache-2.0 section 5.
 
-## Provenance reviewed so far
+The build-file histories identify Salil Chincholikar as their sole author. References to unrelated personal projects have been removed from the current source and documentation. The Swift package currently has no third-party SwiftPM dependencies, and icon generation source is retained in `scripts/generate-icon.swift`.
 
-- `Makefile` and `scripts/bundle.sh` explicitly identify their Waffle adaptation. The neighboring Waffle project's LICENSE is Apache-2.0; its NOTICE names Salil Chincholikar and Waffle contributors. Bridge retains that attribution and the adaptation comments.
-- The Swift package currently has no third-party SwiftPM dependencies. Recheck dependency licenses/notices when packages are introduced.
-- Icon generation source is retained in `scripts/generate-icon.swift`.
-
-This is not a complete ownership clearance for every file. Finish reviewing the exact intended initial source manifest, fixtures/assets and historical experiments before publication. Do not copy unrelated third-party notices merely because they occur in Waffle's broader dependency inventory; retain the notices applicable to material actually included in Bridge.
-
-Public screenshots must use fictional demo data. Unreviewed experiments and generated development artifacts are not automatically cleared for public import. See [release preparation](releases.md).
+Recheck licenses and preserve applicable notices when introducing third-party code, packages or assets. Historical experiments and generated development artifacts are not automatically included in the public source. See [release preparation](releases.md).
