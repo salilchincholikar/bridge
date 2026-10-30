@@ -23,6 +23,6 @@ Private vulnerability-reporting setup is explicitly owner-managed and is not a p
 
 ## Validation and remaining scope
 
-See [validation.md](validation.md) for the 723 offline Core checks, 179 GUI checks, standalone client example and bundle checks already completed. Source/documentation assets and links are checked before commit. The actual GitHub workflow must be observed after the first push; do not treat its presence as a passing CI run.
+See [validation.md](validation.md) for the 723 offline Core checks, 179 GUI checks, standalone client example and bundle checks already completed. Source/documentation assets and links are checked before commit. The [initial hosted workflow](https://github.com/salilchincholikar/bridge/actions/runs/40872287204) passed for commit `94bd404`: offline regressions, independent Core consumer, production bundle verification and UI-harness compilation. Hosted GUI execution remains separate.
 
 Real-account/provider compatibility, minimum-OS/Intel testing, broader accessibility review, concurrency cleanup and Developer ID/notarization remain separate release work. Assistant integration remains explicitly experimental and opt-in. No production-readiness certification, provider subscription compatibility or external-CLI isolation guarantee is made by publishing the source.

@@ -1,6 +1,6 @@
 # Bridge — open-source preparation plan
 
-Status: initial source publication preparation, following the local source audit on 2026-10-29. Apache-2.0 has been adopted with LICENSE and NOTICE included in app bundles. The owner provided `salilchincholikar/bridge` as the public destination. See [publication-review.md](publication-review.md) for the reviewed source scope; hosted CI and publication state must be verified after push.
+Status: initial source publication preparation, following the local source audit on 2026-10-29. Apache-2.0 has been adopted with LICENSE and NOTICE included in app bundles. The initial source was published to [salilchincholikar/bridge](https://github.com/salilchincholikar/bridge) on `main` as commit `94bd404`; its [hosted CI run](https://github.com/salilchincholikar/bridge/actions/runs/40872287204) passed. See [publication-review.md](publication-review.md) for the reviewed scope and [validation.md](validation.md) for the distinction between hosted build checks and local GUI evidence.
 
 ## Implementation update — 2026-10-29
 

@@ -1,5 +1,7 @@
 # Bridge
 
+[![Checks](https://github.com/salilchincholikar/bridge/actions/workflows/checks.yml/badge.svg?branch=main)](https://github.com/salilchincholikar/bridge/actions/workflows/checks.yml)
+
 A native macOS workspace for AWS. Browse services, inspect logs, investigate workloads and understand account costs without losing your profile and region context.
 
 Built with Swift, AppKit and hosted SwiftUI/Charts. Each native window tab keeps its own AWS context; a shared command drawer shows the requests behind the current view.
@@ -33,7 +35,12 @@ Billing loads only when requested. Cost Explorer must be enabled and permitted f
 - **Real AWS use:** [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and an existing named profile. Bridge discovers `/opt/homebrew/bin/aws` or `/usr/local/bin/aws`; `aws_path` in Bridge settings can select another installation.
 - **Demo/offline checks:** no AWS credentials, installed AWS CLI or model-provider account required.
 
-There is no published installer yet. Build from a checkout using the commands below.
+There is no published installer yet. Clone the source, then use the build commands below:
+
+```sh
+git clone https://github.com/salilchincholikar/bridge.git
+cd bridge
+```
 
 ## Try the demo
 

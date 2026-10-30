@@ -17,7 +17,7 @@ Use macOS 14+ with Swift tools 6.2 or newer. The current local setup uses Comman
 
 Do not run builds concurrently in the same `.build` directory. The UI harness uses a compilation flag; bundle scripts rebuild the correct variant so ordinary app/demo binaries exclude it. GUI execution needs an actual user session. Hosted CI builds the harness but does not claim GUI acceptance.
 
-`.github/workflows/checks.yml` is prepared for `macos-15` with Xcode 26.2 selected explicitly. This combination is based on the [published runner inventory](https://github.com/actions/runner-images/blob/main/images/macos/macos-15-Readme.md); it has not run on GitHub for this project. Keep toolchain updates deliberate. The workflow uses a pinned checkout action, read-only contents permission, no persisted Git credentials and no AWS/provider/signing secrets.
+`.github/workflows/checks.yml` is prepared for `macos-15` with Xcode 26.2 selected explicitly. This combination is based on the [published runner inventory](https://github.com/actions/runner-images/blob/main/images/macos/macos-15-Readme.md); the [initial hosted run](https://github.com/salilchincholikar/bridge/actions/runs/40872287204) passed for this project. Keep toolchain updates deliberate. The workflow uses a pinned checkout action, read-only contents permission, no persisted Git credentials and no AWS/provider/signing secrets.
 
 The full suite is offline but includes process creation, local sockets and process-tree inspection. Restricted shells may block those checks; report that restriction instead of treating skipped checks as passes. Compiler-cache overrides and `SWIFT_FLAGS` are optional local workarounds, not application authorization settings.
 
