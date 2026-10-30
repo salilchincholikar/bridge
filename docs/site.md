@@ -10,7 +10,7 @@ Edit `site/index.html`, `site/styles.css` and `site/script.js`. The builder read
 
 ## Deployment
 
-The GitHub Pages workflow builds and deploys `_site` when relevant files change on `main`, or when manually dispatched. Repository Settings → Pages → Build and deployment must use **GitHub Actions**. Initial enablement may require the repository owner to select this setting; the workflow attempts automatic enablement first.
+The GitHub Pages workflow builds and deploys `_site` when relevant files change on `main`, or when manually dispatched. Repository Settings → Pages → Build and deployment uses **GitHub Actions**, enabled by the repository owner. For a new fork, select this setting before running the deployment workflow.
 
 Only generated site files are uploaded. App bundles, fixtures, credentials and the rest of the repository are outside the Pages artifact. Asset paths are relative so the site works under the `/bridge/` project path.
 
